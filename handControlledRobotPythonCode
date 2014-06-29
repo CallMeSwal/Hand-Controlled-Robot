@@ -1,0 +1,49 @@
+#this code is run in python 2.7
+
+#libraries
+from cv2 import *
+from PIL import Image
+import serial
+
+ser = serial.Serial('COM3', 9600)
+
+cam = VideoCapture(0)   # 0 -> index of camera
+while(1):
+    s, img = cam.read()
+    if s:    # frame captured without any errors
+        imwrite("sidewalk.png",img) #save image
+    img = Image.open("sidewalk.png")
+    pix = img.load()
+    width, height = img.size
+    for x in range(width):
+        for y in range(height):
+            if pix[x,y][0]  < 5 and pix[x,y][1]  < 5 and pix[x,y][2] < 5:
+                if x < width/3:
+                    ser.write('1')
+                    print('left')
+                    break
+                elif x > width/3*2:
+                    ser.write('2')
+                    print('right')
+                    break
+                elif x < width/3 and x < width/3*2:
+                    ser.write('3')
+                    print('stop')
+                    break
+                if y < height/3:
+                    ser.write('4')
+                    print('up')
+                    break
+                elif y > height/3*2:
+                    ser.write('5')
+                    print('down')
+                    break
+                elif y < height/3 and y < height/3*2:
+                    ser.write('3')
+                    print('stop')
+                    break
+            else:
+                continue
+            break
+    ser.write('3')
+    print('stop')

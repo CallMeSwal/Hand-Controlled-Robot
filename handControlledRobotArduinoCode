@@ -25,6 +25,10 @@ void loop()
       Serial.println(Serial.read());
       direct = 2;
     }
+    else if (Serial.peek() == '3'){
+      Serial.println(Serial.read());
+      direct = 3;
+    }
     else if (Serial.peek() == '4'){
       Serial.println(Serial.read());
       direct = 4;
@@ -33,35 +37,47 @@ void loop()
       Serial.println(Serial.read());
       direct = 5;
     }
-    else if (Serial.peek() == '3'){
+    else if (Serial.peek() == '6'){
       Serial.println(Serial.read());
-      direct = 3;
+      direct = 6;
     }
+    else if (Serial.peek() == '7'){
+      Serial.println(Serial.read());
+      direct = 7;
+    }
+    else if (Serial.peek() == '8'){
+      Serial.println(Serial.read());
+      direct = 8;
+    }
+    else if (Serial.peek() == '9'){
+      Serial.println(Serial.read());
+      direct = 9;
+    }
+    
   }
-  if (direct == 1){
+  if (direct == 1){//full right
     motorOne.write(2000);
     motorTwo.write(1000);
   }
-  else if (direct == 2){
+  else if (direct == 2){//full left
     motorOne.write(1000);
     motorTwo.write(2000);
   }
   
-  else if (direct == 4){//forwards
-    motorOne.write(1000);
-    motorTwo.write(1000);
+  else if (direct == 3){// full forwards
+    motorOne.write(1100);
+    motorTwo.write(1100);
 
   }
-  else if (direct == 5){//back
-    motorOne.write(2000);
-    motorTwo.write(2000);
+  else if (direct == 4){// full back
+    motorOne.write(1900);
+    motorTwo.write(1900);
 
   }
-  else{
+  else if (direct == 5){
     motorOne.write(1500);
     motorTwo.write(1500);
   }
-
 }
 
 

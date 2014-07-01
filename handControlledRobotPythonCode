@@ -1,4 +1,17 @@
-#this code is run in python 2.7
+'''
+get some sort of webcam(phone, camera, etc)
+make mount for camera
+connect robot to laptop
+write code that take pictures of index finger and checks on what side of picture the index finger is
+write code to send that data to the arduino
+allow the arduino to read and repspond the code
+ 
+
+take a picture
+iterate through each pixel until you have a certain color
+check on what side of picture that pixel is
+send data to arduino
+'''
 
 #libraries
 from cv2 import *
@@ -8,42 +21,52 @@ import serial
 ser = serial.Serial('COM3', 9600)
 
 cam = VideoCapture(0)   # 0 -> index of camera
+s, img = cam.read()
+'''
+if s:    # frame captured without any errors
+    imwrite("template.png",img) #save image
+'''
+
 while(1):
     s, img = cam.read()
     if s:    # frame captured without any errors
         imwrite("sidewalk.png",img) #save image
     img = Image.open("sidewalk.png")
+    tem = Image.open("template.png")
     pix = img.load()
+    pix2 = tem.load()
     width, height = img.size
     for x in range(width):
         for y in range(height):
             if pix[x,y][0]  < 5 and pix[x,y][1]  < 5 and pix[x,y][2] < 5:
-                if x < width/3:
+                if x > width/3*2 and y > height/3 and y < height/3*2:#if hand is right middle
                     ser.write('1')
-                    print('left')
+                    print('full-right')
                     break
-                elif x > width/3*2:
+                elif x < width/3 and y > height/3 and y < height/3*2:#if hand is left middle
                     ser.write('2')
-                    print('right')
+                    print('full-left')
                     break
-                elif x < width/3 and x < width/3*2:
+                elif y < height/3 and x > width/3 and x < width/3*2:#if hand is middle up
                     ser.write('3')
-                    print('stop')
+                    print('forwards')
                     break
-                if y < height/3:
+                if y > height/3 and x > width/3 and x < width/3*2:#if hand is middle down
                     ser.write('4')
-                    print('up')
+                    print('backwards')
                     break
-                elif y > height/3*2:
+                elif x > width/3 and x < width/3*2 and y > height/3 and y < height/3*2: # if hand is middle middle
                     ser.write('5')
-                    print('down')
-                    break
-                elif y < height/3 and y < height/3*2:
-                    ser.write('3')
                     print('stop')
                     break
+                '''
+                if pix2[x,y][0]  < pix2[x,y][2]+20 and pix2[x,y][1]  < pix2[x,y][2]+20:
+                    print('black is over blue')
+                    ser.write('4')
+                    break
+                '''
             else:
                 continue
             break
-    ser.write('3')
+    ser.write('5')
     print('stop')
